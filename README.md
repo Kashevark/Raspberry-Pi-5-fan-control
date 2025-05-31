@@ -8,9 +8,7 @@
 ├── Makefile               # Build/install management  
 ├── fan_config.ini         # Configuration (speed, pins, logging)  
 ├── fan_control.py         # Main PWM control script  
-├── fan-control.service    # Systemd service for autostart  
-├── assets/                # (Optional) For icons/images  
-│   └── fan-icon.png       # Project icon  
+├── fan-control.service    # Systemd service for autostart   
 └── README.md              # Project documentation  
 ```
 
@@ -21,12 +19,7 @@ This script automatically adjusts **3-pin/4-pin PWM fan** speed based on CPU tem
 - **Gradual speed control** (4 temperature thresholds)  
 - **Hysteresis** (prevents rapid speed switching)  
 - **Systemd service** for background operation  
-
-Ideal for:  
-- 🖥️ **Raspberry Pi** (GPIO PWM)  
-- 🖥️ **Linux PCs** (via `/sys/class/hwmon`)  
-- 🔧 **Microcontroller projects** (Arduino, ESP32)  
-
+ 
 ---
 
 ## **⚙️ Installation**  
@@ -94,5 +87,3 @@ MIT License.
 ---
 
 Enjoy automatic fan control - quiet when idle, powerful under load! 🚀  
-
-*(Note: Add actual icon file in `assets/` folder and update the icon path in README)*
