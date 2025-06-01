@@ -1,19 +1,19 @@
 .PHONY: help install install-script install-config install-service enable start restart stop status uninstall clean
 
 help:
-	@echo "Fan Control Service Management:"
+	@echo "Справка нпо командам:"
 	@echo "  make install         - Полная установка (script + config + service + enable)"
 	@echo "  make start           - Запуск сервиса"
 	@echo "  make restart         - Перезапуск сервиса"
 	@echo "  make stop            - Остановка сервиса"
 	@echo "  make status          - Проверить статус сервиса"
-	@echo "  make uninstall       - Remove all components"
-	@echo "  make clean           - Remove local Python cache files"
+	@echo "  make uninstall       - Удалить все компоненты"
+	@echo "  make clean           - Удалить локальные Python cache files"
 	@echo " --------------------------------------------------------------------------------"
-	@echo "  make install-script  - Install only the control script"
-	@echo "  make install-config  - Install only the config file"
-	@echo "  make install-service - Install only the systemd service"
-	@echo "  make enable          - Enable service autostart"
+	@echo "  make install-script  - Установить только скрипт"
+	@echo "  make install-config  - Установить только конфиг"
+	@echo "  make install-service - Установить только сервис"
+	@echo "  make enable          - Включение автозапуска"
 
 install: install-script install-config install-service enable
 
