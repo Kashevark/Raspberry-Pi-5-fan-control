@@ -9,7 +9,7 @@ help:
 	@echo "  make status          - Check service status"
 	@echo "  make uninstall       - Remove all components"
 	@echo "  make clean           - Remove local Python cache files"
-
+	@echo " -------------------------------------------------------------------------------"
 	@echo "  make install-script  - Install only the control script"
 	@echo "  make install-config  - Install only the config file"
 	@echo "  make install-service - Install only the systemd service"
@@ -29,7 +29,7 @@ install-config:
 install-service:
 	@echo "Installing systemd service to /etc/systemd/system/fan-control.service..."
 	sudo install -m 644 fan-control.service /etc/systemd/system/fan-control.service
-	sudo systemctl daemon-reload
+	sudo systemctl daemon-reexec
 
 enable:
 	@echo "Enabling service autostart..."
