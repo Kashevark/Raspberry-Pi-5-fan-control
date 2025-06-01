@@ -2,7 +2,11 @@
 
 help:
 	@echo "Fan Control Service Management:"
-	@echo "  make install         - Full installation (script + config + service + enable)"
+	@echo "  make install         - Full installation (script + config + service)"
+	@echo "  make install-script  - Install only the control script"
+	@echo "  make install-config  - Install only the config file"
+	@echo "  make install-service - Install only the systemd service"
+	@echo "  make enable          - Enable service autostart"
 	@echo "  make start           - Start service"
 	@echo "  make restart         - Restart service"
 	@echo "  make stop            - Stop service"
@@ -10,16 +14,11 @@ help:
 	@echo "  make uninstall       - Remove all components"
 	@echo "  make clean           - Remove local Python cache files"
 
-	@echo "  make install-script  - Install only the control script"
-	@echo "  make install-config  - Install only the config file"
-	@echo "  make install-service - Install only the systemd service"
-	@echo "  make enable          - Enable service autostart"
-
 install: install-script install-config install-service enable
 
 install-script:
 	@echo "Installing control script to /usr/local/bin/fan_control.py..."
-	sudo install -m 755 fan_control.py /usr/local/bin/
+	sudo install -m 755 fan_control.py /usr/local/bin/fan_control.py
 
 install-config:
 	@echo "Installing config file to /etc/fan_control/fan_config.ini..."
