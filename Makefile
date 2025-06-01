@@ -9,7 +9,7 @@ help:
 	@echo "  make status          - Проверить статус сервиса"
 	@echo "  make uninstall       - Remove all components"
 	@echo "  make clean           - Remove local Python cache files"
-
+	@echo " --------------------------------------------------------------------------------"
 	@echo "  make install-script  - Install only the control script"
 	@echo "  make install-config  - Install only the config file"
 	@echo "  make install-service - Install only the systemd service"
