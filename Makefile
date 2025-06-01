@@ -19,16 +19,17 @@ install: install-script install-config install-service enable
 
 install-script:
 	@echo "Installing control script to /usr/local/bin/fan_control.py..."
-	sudo install -m 755 fan_control.py /usr/local/bin/
+	sudo cp fan_control.py /usr/local/bin/
+	sudo chmod +x /usr/local/bin/fan_control.py
 
 install-config:
 	@echo "Installing config file to /etc/fan_control/fan_config.ini..."
 	sudo mkdir -p /etc/fan_control
-	sudo install -m 644 fan_config.ini /etc/fan_control/fan_config.ini
+	sudo cp fan_config.ini /etc/fan_config.ini
 
 install-service:
 	@echo "Installing systemd service to /etc/systemd/system/fan-control.service..."
-	sudo install -m 644 fan-control.service /etc/systemd/system/fan-control.service
+	sudo cp fan-control.service /etc/systemd/system/
 	sudo systemctl daemon-reexec
 
 enable:
