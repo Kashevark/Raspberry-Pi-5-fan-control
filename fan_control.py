@@ -1,93 +1,47 @@
-from subprocess import run as srun, PIPE
-from time import sleep
-from datetime import timedelta as td, datetime as dt
-from configparser import ConfigParser
+#!/usr/bin/env python3
+
+import time
+import configparser
 import os
 
-config = ConfigParser()
-config.read('fan_config.ini')
+CONFIG_PATH = "/etc/fan_config.ini"
+FAN_PATH = "/proc/device-tree/cooling_device/fan0/cur_state"
+TEMP_PATH = "/sys/class/thermal/thermal_zone0/temp"
 
-STEP1 = config.getint('FAN', 'STEP1')
-STEP2 = config.getint('FAN', 'STEP2')
-STEP3 = config.getint('FAN', 'STEP3')
-STEP4 = config.getint('FAN', 'STEP4')
-SLEEP_TIMER = config.getint('FAN', 'SLEEP_TIMER')
-TICKS = config.getint('FAN', 'TICKS')
-DELTA_TEMP = config.getint('FAN', 'DELTA_TEMP')
-fanControlFile = config.get('FAN', 'FAN_CONTROL_FILE')
+def write_fan_state(state):
+    try:
+        with open("/sys/class/thermal/cooling_device0/cur_state", "w") as f:
+            f.write(str(state))
+    except PermissionError:
+        print("Permission denied: run as root.")
+    except FileNotFoundError:
+        print("Fan control interface not found.")
 
-DATETIME_FORMAT = '%Y-%m-%d %H:%M:%S'
+def get_temp():
+    with open(TEMP_PATH, "r") as f:
+        return int(f.read()) / 1000
 
 def main():
-    print("Running FAN control for RPI5 Ubuntu")
-    t0 = dt.now()
+    config = configparser.ConfigParser()
+    config.read(CONFIG_PATH)
+    step1 = config.getint("FAN", "STEP1")
+    step2 = config.getint("FAN", "STEP2")
+    step3 = config.getint("FAN", "STEP3")
 
-    command = f'tee -a {fanControlFile} > /dev/null'
-    oldSpeed = 0
-    ticks = 0
-
-    speed = 1
-    lastTemp = 0
-
-    while True:
-        sleep(SLEEP_TIMER)
-        t1 = dt.now()
-        if(t1 + td(seconds=TICKS) > t0):
-            t0 = t1
-            
-            tempOut = getOutput('vcgencmd measure_temp')
-            try:
-                cels = int(tempOut.split('temp=')[1][:2])
-            except:
-                cels = 40
-
-            if STEP1 < cels < STEP2:
-                speed = 1
-            elif STEP2 < cels < STEP3:
-                speed = 2
-            elif STEP3 < cels < STEP4:
-                speed = 3
-            elif cels >= STEP4:
-                speed = 4
-
-            deltaTempNeg = lastTemp - DELTA_TEMP
-            deltaTempPos = lastTemp + DELTA_TEMP
-
-            if oldSpeed != speed and not(deltaTempNeg <= cels <= deltaTempPos):
-                print(f'oldSpeed: {oldSpeed} | newSpeed: {speed}')
-                print(f'{deltaTempNeg}ºC <= {cels}ºC <= {deltaTempPos}ºC')
-                print(f'{"#"*30}\n' +
-                    f'Updating fan speed!\t{t0.strftime(DATETIME_FORMAT)}\n' +
-                    f'CPU TEMP: {cels}ºC\n' +
-                    f'FAN speed will be set to: {speed}\n' +
-                    f'{"#"*30}\n')
-                
-                _command = f'echo {speed} | sudo {command}'
-                callShell(_command, debug=True)
-                checkVal = getOutput(f'cat {fanControlFile}')
-                print(f'Confirm FAN set to speed: {checkVal}')
-                
-                oldSpeed = speed
-                lastTemp = cels
-                ticks = 0
-            
-            if(ticks > TICKS * 3):
-                ticks = 0
-                print(f'Current Temp is: {cels}ºC\t{t0.strftime(DATETIME_FORMAT)}')
-            ticks += 1
-    
-def callShell(cmd, shell=True, debug=False):
-    if debug:
-        print(f'Calling: [{cmd}]')
-    return srun(f'''{cmd}''', stdout=PIPE, shell=shell)
- 
-def getOutput(cmd, shell=True):
-    stdout = callShell(cmd, shell=shell).stdout
     try:
-        stdout = stdout.decode('utf-8')
-    except:
-        pass
-    return stdout
+        while True:
+            temp = get_temp()
+            if temp >= step3:
+                write_fan_state(3)
+            elif temp >= step2:
+                write_fan_state(2)
+            elif temp >= step1:
+                write_fan_state(1)
+            else:
+                write_fan_state(0)
+            time.sleep(5)
+    except KeyboardInterrupt:
+        write_fan_state(0)
 
 if __name__ == "__main__":
     main()

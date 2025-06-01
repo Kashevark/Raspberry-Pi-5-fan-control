@@ -17,26 +17,34 @@ help:
 
 install: install-script install-config install-service enable
 
+
+sudo systemctl daemon-reexec
+sudo systemctl enable fan-control.service
+sudo systemctl start fan-control.service
 install-script:
-	@echo "Installing control script to /usr/local/bin/fan_control.py..."
-	sudo install -m 755 fan_control.py /usr/local/bin/
+	@echo "Копирование скрипта fan_control.py..."
+	sudo cp fan_control.py /usr/local/bin/
+	@echo "Добавление прав на запуск fan_control.py..."
+	sudo chmod +x /usr/local/bin/fan_control.py
 
 install-config:
-	@echo "Installing config file to /etc/fan_control/fan_config.ini..."
+	@echo "Копирование конфигурации fan_config.ini..."
 	sudo mkdir -p /etc/fan_control
-	sudo install -m 644 fan_config.ini /etc/fan_control/fan_config.ini
+	sudo cp fan_config.ini /etc/fan_config.ini
 
 install-service:
-	@echo "Installing systemd service to /etc/systemd/system/fan-control.service..."
-	sudo install -m 644 fan-control.service /etc/systemd/system/fan-control.service
-	sudo systemctl daemon-reload
+	@echo "Копирование сервиса fan-control.service..."
+	sudo cp fan-control.service /etc/systemd/system/
+	echo "Какой-то новый daemon-reexec..."
+	sudo systemctl daemon-reexec
+# sudo systemctl daemon-reload
 
 enable:
-	@echo "Enabling service autostart..."
+	@echo "Включение автозапуска..."
 	sudo systemctl enable fan-control.service
 
 start:
-	@echo "Starting service..."
+	@echo "Включение сервиса..."
 	sudo systemctl start fan-control.service
 
 restart:

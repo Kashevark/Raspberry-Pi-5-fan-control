@@ -4,9 +4,8 @@ After=multi-user.target
 
 [Service]
 Type=simple
-ExecStart=/usr/bin/python3 /usr/local/bin/fan_control.py --config /etc/fan_control/fan_config.ini
-Restart=always
-User=root
+ExecStart=/usr/bin/python3 /usr/local/bin/fan_control.py
+Restart=on-failure
 
 [Install]
 WantedBy=multi-user.target
